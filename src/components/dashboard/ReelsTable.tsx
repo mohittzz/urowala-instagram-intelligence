@@ -340,7 +340,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                               </button>
                             )}
 
-                            <span className="text-[10px] text-slate-400">
+                            <span suppressHydrationWarning className="text-[10px] text-slate-400">
                               {reel.postedAtIST.split(',')[0]}
                             </span>
                           </div>

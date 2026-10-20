@@ -170,7 +170,7 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
                       {reel.caption}
                     </p>
                     <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
-                      <span>Posted: {reel.postedAtIST.split(',')[0]}</span>
+                      <span suppressHydrationWarning>Posted: {reel.postedAtIST.split(',')[0]}</span>
                       <span>&bull;</span>
                       <span>Lifetime: {formatCompactNumber(reel.lifetimeMetrics.views)} views</span>
                       <span>&bull;</span>

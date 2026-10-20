@@ -224,7 +224,7 @@ export function CommentIntelligenceView({
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-urowala-50 text-urowala-700 border border-urowala-200">
                         {comment.topicName}
                       </span>
-                      <span className="text-[10px] text-slate-400">
+                      <span suppressHydrationWarning className="text-[10px] text-slate-400">
                         {comment.postedAtIST}
                       </span>
                     </div>

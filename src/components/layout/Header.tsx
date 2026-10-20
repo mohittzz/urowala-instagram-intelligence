@@ -123,7 +123,7 @@ export function Header({ isDemo = true, lastSyncedAtIST = 'Today at 02:25 PM IST
             {/* Last Synced Badge */}
             <div className="hidden lg:flex flex-col text-right text-xs">
               <span className="text-slate-400">Last Synced</span>
-              <span className="font-mono text-slate-200 font-medium">{lastSyncedAtIST}</span>
+              <span suppressHydrationWarning className="font-mono text-slate-200 font-medium">{lastSyncedAtIST}</span>
             </div>
 
             {/* Sync Now Button */}
