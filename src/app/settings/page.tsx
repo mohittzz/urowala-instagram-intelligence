@@ -30,6 +30,8 @@ export default function SettingsPage() {
           isConfigured={accountStatus.connected}
           accountUsername={accountStatus.account?.username}
           lastSyncedAt={accountStatus.account?.lastSyncedAt}
+          hasApifyToken={(accountStatus as any).hasApifyToken}
+          provider={(accountStatus as any).provider}
         />
       </main>
 

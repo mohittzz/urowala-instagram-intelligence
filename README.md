@@ -53,10 +53,19 @@ Production-ready, private Instagram analytics intelligence platform engineered f
 
 ---
 
-## 🚀 Step-by-Step Setup & Deployment
+## 🚀 Connecting Instagram: Apify vs Meta Graph API
 
-### 1. Meta Developer App Configuration
+### Method A: Apify Ingestion (Recommended & Fastest)
+Using Apify bypasses Meta's strict App Review and Facebook Page linking requirements:
+1. Create a free account at [Apify](https://console.apify.com/).
+2. Retrieve your Personal API Token from **Settings &rarr; Integrations &rarr; API Tokens**.
+3. Add `APIFY_API_TOKEN=your_token` to your `.env.local` or Vercel Environment Variables.
+4. Go to **Settings** in the dashboard and click **Run Apify Sync Now** for `@dr.mohit_urowala`.
+5. Apify will immediately extract all public Reels, play counts, view counts, likes, captions, comments, and timestamps into Supabase!
 
+---
+
+### Method B: Meta Developer App (OAuth)
 1. Visit [Meta for Developers](https://developers.facebook.com/) and click **Create App**.
 2. Select **Other** &rarr; **Business**.
 3. Under **Add products to your app**, add:

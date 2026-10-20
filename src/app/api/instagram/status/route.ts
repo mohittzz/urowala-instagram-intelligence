@@ -3,12 +3,17 @@ import { getServerSupabase } from '@/lib/supabase/server';
 import { DEMO_ACCOUNT } from '@/lib/mock/demo-data';
 
 export async function GET() {
+  const hasApifyToken = Boolean(process.env.APIFY_API_TOKEN || process.env.APIFY_TOKEN);
+  const hasMetaApp = Boolean(process.env.INSTAGRAM_APP_ID && process.env.INSTAGRAM_APP_SECRET);
   const supabase = getServerSupabase();
 
   if (!supabase) {
     return NextResponse.json({
       connected: false,
       isDemo: true,
+      provider: hasApifyToken ? 'apify_ready' : hasMetaApp ? 'meta_ready' : 'none',
+      hasApifyToken,
+      hasMetaApp,
       reason: 'Supabase credentials not configured in environment variables.',
       account: DEMO_ACCOUNT,
       lastSync: null,
@@ -26,7 +31,10 @@ export async function GET() {
       return NextResponse.json({
         connected: false,
         isDemo: true,
-        reason: 'No connected Instagram account found in database. Using sample demo data.',
+        provider: hasApifyToken ? 'apify_ready' : hasMetaApp ? 'meta_ready' : 'none',
+        hasApifyToken,
+        hasMetaApp,
+        reason: 'No synced Instagram account found in database yet. Ready to ingest with Apify or Meta.',
         account: DEMO_ACCOUNT,
         lastSync: null,
       });
@@ -45,6 +53,9 @@ export async function GET() {
     return NextResponse.json({
       connected: true,
       isDemo: false,
+      provider: hasApifyToken ? 'apify' : 'meta',
+      hasApifyToken,
+      hasMetaApp,
       account: {
         id: acc.id,
         username: acc.username,
@@ -63,6 +74,9 @@ export async function GET() {
     return NextResponse.json({
       connected: false,
       isDemo: true,
+      provider: hasApifyToken ? 'apify_ready' : 'none',
+      hasApifyToken,
+      hasMetaApp,
       reason: err.message || 'Database error',
       account: DEMO_ACCOUNT,
       lastSync: null,

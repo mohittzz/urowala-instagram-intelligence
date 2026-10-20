@@ -14,18 +14,31 @@ import {
   Copy,
   Check,
   Terminal,
+  Zap,
+  Sparkles,
 } from 'lucide-react';
 
 interface SettingsViewProps {
   isConfigured?: boolean;
   accountUsername?: string;
   lastSyncedAt?: string;
+  hasApifyToken?: boolean;
+  provider?: string;
 }
 
-export function SettingsView({ isConfigured = false, accountUsername = 'dr.mohit_urowala', lastSyncedAt }: SettingsViewProps) {
+export function SettingsView({
+  isConfigured = false,
+  accountUsername = 'dr.mohit_urowala',
+  lastSyncedAt,
+  hasApifyToken = false,
+  provider = 'apify',
+}: SettingsViewProps) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [apifyTokenInput, setApifyTokenInput] = useState('');
+  const [targetUsernameInput, setTargetUsernameInput] = useState(accountUsername || 'dr.mohit_urowala');
   const [testingSync, setTestingSync] = useState(false);
   const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+  const [syncSuccess, setSyncSuccess] = useState<boolean | null>(null);
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -33,19 +46,34 @@ export function SettingsView({ isConfigured = false, accountUsername = 'dr.mohit
     setTimeout(() => setCopiedKey(null), 2500);
   };
 
-  const handleTestSync = async () => {
+  const handleRunApifySync = async () => {
     setTestingSync(true);
     setSyncFeedback(null);
+    setSyncSuccess(null);
+
     try {
-      const res = await fetch('/api/instagram/sync', { method: 'POST' });
+      const res = await fetch('/api/apify/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: targetUsernameInput,
+          token: apifyTokenInput || undefined,
+        }),
+      });
+
       const data = await res.json();
-      if (!res.ok) {
-        setSyncFeedback(`Sync returned error: ${data.error || 'Server error'}`);
+      if (!res.ok || !data.success) {
+        setSyncSuccess(false);
+        setSyncFeedback(data.error || 'Apify sync failed. Check token or account privacy.');
       } else {
-        setSyncFeedback(`Successfully collected snapshot for ${data.reelsSynced} reels!`);
+        setSyncSuccess(true);
+        setSyncFeedback(
+          `Success! Scraped ${data.reelsSynced} Reels and ${data.commentsSynced} comments for @${data.accountUsername} via Apify.`
+        );
       }
     } catch (err: any) {
-      setSyncFeedback(`Test simulated snapshot executed in demo environment.`);
+      setSyncSuccess(false);
+      setSyncFeedback(err.message || 'Network error triggering Apify sync');
     } finally {
       setTestingSync(false);
     }
@@ -53,56 +81,153 @@ export function SettingsView({ isConfigured = false, accountUsername = 'dr.mohit
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* Overview Banner */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs">
+      {/* Top Banner */}
+      <div className="bg-gradient-to-r from-urowala-950 via-urowala-900 to-navy-900 text-white rounded-3xl p-6 shadow-md border border-urowala-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-urowala-50 text-urowala-600 border border-urowala-200">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="p-3 rounded-2xl bg-amber-400/20 text-amber-300 border border-amber-400/30">
+              <Zap className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-                Meta Instagram & Supabase Integration
-              </h2>
-              <p className="text-xs text-slate-500">
-                Official Graph API connection, token renewal lifecycle, and database configuration
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold tracking-tight">
+                  Instagram Connection: Apify & Meta
+                </h2>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  Recommended: Apify
+                </span>
+              </div>
+              <p className="text-xs text-slate-300">
+                Connect <code>@{accountUsername}</code> without Meta App Review hurdles or Facebook Page admin requirements.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <a
-              href="/api/auth/instagram"
-              className="px-4 py-2 bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:opacity-95 text-white font-semibold rounded-xl text-xs shadow-sm flex items-center gap-2 transition active:scale-95"
+              href="https://console.apify.com/account/integrations"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 bg-urowala-800 hover:bg-urowala-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition border border-urowala-700"
             >
-              <span>Connect @dr.mohit_urowala</span>
+              <span>Get Apify Token</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
       </div>
 
-      {/* Integration Status Cards */}
+      {/* Primary: Apify Instagram Connector Card */}
+      <div className="bg-white rounded-3xl p-6 border-2 border-urowala-600/30 shadow-md">
+        <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              A
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 text-base">Apify Instagram Integration</h3>
+              <p className="text-xs text-slate-500">
+                Directly scrapes public Reels, plays/views, comments, likes, and timestamps for @{targetUsernameInput}
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Ready for Ingestion</span>
+          </span>
+        </div>
+
+        {/* Input Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Apify API Token (Optional if set in Vercel .env)
+            </label>
+            <input
+              type="password"
+              placeholder="apify_api_..."
+              value={apifyTokenInput}
+              onChange={(e) => setApifyTokenInput(e.target.value)}
+              className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-urowala-500 font-mono"
+            />
+            <p className="text-[11px] text-slate-400 mt-1">
+              Found at <a href="https://console.apify.com/account/integrations" target="_blank" rel="noopener noreferrer" className="text-urowala-600 underline">Apify Console &rarr; Settings &rarr; Integrations &rarr; API Token</a>
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Target Instagram Account
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">@</span>
+              <input
+                type="text"
+                value={targetUsernameInput}
+                onChange={(e) => setTargetUsernameInput(e.target.value)}
+                className="w-full text-xs pl-7 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-urowala-500 font-semibold text-slate-800"
+              />
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1">
+              Will fetch recent video plays, captions, and comments for this profile
+            </p>
+          </div>
+        </div>
+
+        {/* Trigger Button & Console */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+          <div className="text-xs text-slate-500">
+            Uses <code>apify/instagram-scraper</code> actor with automated timeout and dataset ingestion.
+          </div>
+
+          <button
+            onClick={handleRunApifySync}
+            disabled={testingSync}
+            className="px-5 py-2.5 bg-urowala-900 hover:bg-black text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 shadow-sm"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${testingSync ? 'animate-spin' : ''}`} />
+            <span>{testingSync ? 'Running Apify Scraper...' : 'Run Apify Sync Now'}</span>
+          </button>
+        </div>
+
+        {/* Sync Feedback Message */}
+        {syncFeedback && (
+          <div className={`mt-4 p-3.5 rounded-xl border text-xs font-medium flex items-start gap-2 ${
+            syncSuccess
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : 'bg-rose-50 text-rose-800 border-rose-200'
+          }`}>
+            {syncSuccess ? (
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            )}
+            <div>{syncFeedback}</div>
+          </div>
+        )}
+      </div>
+
+      {/* Architecture Cards: 3 Pillars */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Meta Instagram Graph API */}
+        {/* Apify Engine */}
         <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-pink-50 text-pink-600">
-                <Key className="w-4 h-4" />
+              <div className="p-2 rounded-xl bg-orange-50 text-orange-600">
+                <Zap className="w-4 h-4" />
               </div>
-              <h4 className="font-bold text-xs text-slate-900">Meta Graph API</h4>
+              <h4 className="font-bold text-xs text-slate-900">Apify Ingestion</h4>
             </div>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              v19.0 Ready
+              Active
             </span>
           </div>
           <p className="text-xs text-slate-600 mb-3">
-            Permissions: <code>instagram_basic</code>, <code>instagram_manage_insights</code>, <code>instagram_manage_comments</code>.
+            Extracts plays, views, comments, hashtags, and media URLs directly without Facebook logins.
           </p>
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-            <span>Target: @{accountUsername}</span>
-            <span className="text-emerald-600 font-semibold">60-day refreshable</span>
+            <span>Target: @{targetUsernameInput}</span>
+            <span className="text-emerald-600 font-semibold">Zero-auth Scraping</span>
           </div>
         </div>
 
@@ -142,7 +267,7 @@ export function SettingsView({ isConfigured = false, accountUsername = 'dr.mohit
             </span>
           </div>
           <p className="text-xs text-slate-600 mb-3">
-            Endpoint <code>/api/cron/sync</code> secured with bearer secret token.
+            Triggers Apify or Meta sync every 60 minutes via secure endpoint <code>/api/cron/sync</code>.
           </p>
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
             <span>Interval</span>
@@ -151,73 +276,59 @@ export function SettingsView({ isConfigured = false, accountUsername = 'dr.mohit
         </div>
       </div>
 
-      {/* Manual Test Trigger */}
+      {/* Meta Graph API Option */}
       <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h3 className="font-bold text-slate-900 text-sm">Test Snapshot Collection Trigger</h3>
+          <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+            <Key className="w-4 h-4 text-purple-600" />
+            <span>Alternative: Meta Instagram Graph API (OAuth)</span>
+          </h3>
           <p className="text-xs text-slate-500">
-            Executes the server-side sync engine on demand to fetch current metrics and calculate period gains.
+            If you also wish to connect via official Facebook Business Login for private media insights (e.g. per-media follows, reach, saves).
           </p>
-          {syncFeedback && (
-            <div className="mt-2 text-xs font-semibold text-urowala-700 bg-urowala-50 px-3 py-1.5 rounded-lg border border-urowala-200">
-              {syncFeedback}
-            </div>
-          )}
         </div>
 
-        <button
-          onClick={handleTestSync}
-          disabled={testingSync}
-          className="px-4 py-2 bg-slate-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition active:scale-95 disabled:opacity-50"
+        <a
+          href="/api/auth/instagram"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition active:scale-95 shrink-0"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${testingSync ? 'animate-spin' : ''}`} />
-          <span>{testingSync ? 'Executing Snapshot...' : 'Run Test Collection'}</span>
-        </button>
+          <span>Connect Meta OAuth</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
       </div>
 
-      {/* Step-by-Step Setup Guide */}
+      {/* Step-by-Step Production Guide */}
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-6">
         <div>
           <h3 className="text-base font-bold text-slate-900 mb-1">
-            Complete Production Setup & Deployment Blueprint
+            Production Deployment Instructions
           </h3>
           <p className="text-xs text-slate-500">
-            Follow these exact steps to connect Meta Developer credentials and deploy to <code>socialmedia.urowala.com</code> / <code>analytics.urowala.com</code>.
+            Quick setup guide for connecting Apify, Supabase, and Vercel for <code>socialmedia.urowala.com</code>.
           </p>
         </div>
 
         <div className="space-y-4">
-          {/* Step 1: Meta App */}
+          {/* Step 1: Apify Token */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-urowala-600 text-white flex items-center justify-center text-[10px]">1</span>
-                <span>Create Meta Developer App</span>
+                <span className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center text-[10px]">1</span>
+                <span>Get Apify API Token</span>
               </h4>
               <a
-                href="https://developers.facebook.com/apps/"
+                href="https://console.apify.com/account/integrations"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-urowala-600 hover:underline flex items-center gap-1 font-semibold"
+                className="text-xs text-orange-600 hover:underline flex items-center gap-1 font-semibold"
               >
-                <span>developers.facebook.com</span>
+                <span>console.apify.com</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
-            <ul className="text-xs text-slate-600 space-y-1 list-disc pl-5">
-              <li>Log in to Meta for Developers and click <strong>Create App</strong> &rarr; Select <strong>Other</strong> &rarr; <strong>Business</strong>.</li>
-              <li>Add the <strong>Instagram Graph API</strong> and <strong>Facebook Login for Business</strong> products.</li>
-              <li>In Facebook Login settings, add your OAuth Redirect URI:</li>
-            </ul>
-            <div className="flex items-center justify-between bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs">
-              <code>https://socialmedia.urowala.com/api/auth/instagram/callback</code>
-              <button
-                onClick={() => handleCopy('https://socialmedia.urowala.com/api/auth/instagram/callback', 'redirect_uri')}
-                className="text-slate-500 hover:text-slate-900 ml-2"
-              >
-                {copiedKey === 'redirect_uri' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
-            </div>
+            <p className="text-xs text-slate-600">
+              Sign up at Apify (free tier includes \$5 monthly credit, sufficient for thousands of periodic Instagram Reel checks). Copy your Personal API Token.
+            </p>
           </div>
 
           {/* Step 2: Supabase Schema */}
@@ -238,14 +349,11 @@ export function SettingsView({ isConfigured = false, accountUsername = 'dr.mohit
               </a>
             </div>
             <p className="text-xs text-slate-600">
-              Open the SQL Editor in Supabase and run the provided migration script located at:
+              Run the SQL migration script located at:
             </p>
             <div className="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-slate-800">
               <code>src/supabase/schema.sql</code>
             </div>
-            <p className="text-xs text-slate-500">
-              This creates the tables for <code>instagram_accounts</code>, <code>reels</code>, <code>reel_snapshots</code>, <code>reel_comments</code>, and the 8 urology topics with Row-Level Security.
-            </p>
           </div>
 
           {/* Step 3: Vercel Environment Variables */}
@@ -254,31 +362,15 @@ export function SettingsView({ isConfigured = false, accountUsername = 'dr.mohit
               <span className="w-5 h-5 rounded-full bg-urowala-600 text-white flex items-center justify-center text-[10px]">3</span>
               <span>Set Environment Variables in Vercel</span>
             </h4>
-            <p className="text-xs text-slate-600">
-              Add the following keys in your Vercel Project Settings &rarr; Environment Variables:
-            </p>
             <div className="bg-slate-900 text-slate-200 p-3.5 rounded-xl font-mono text-[11px] space-y-1 overflow-x-auto">
-              <p>INSTAGRAM_APP_ID=your_meta_app_id</p>
-              <p>INSTAGRAM_APP_SECRET=your_meta_app_secret</p>
-              <p>INSTAGRAM_REDIRECT_URI=https://socialmedia.urowala.com/api/auth/instagram/callback</p>
+              <p className="text-amber-300 font-bold"># Apify Instagram Scraping</p>
+              <p>APIFY_API_TOKEN=your_apify_api_token</p>
+              <p className="text-slate-400 mt-2 font-bold"># Supabase PostgreSQL</p>
               <p>NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co</p>
               <p>NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key</p>
               <p>SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key</p>
-              <p>CRON_SECRET=your_secure_random_cron_token</p>
-            </div>
-          </div>
-
-          {/* Step 4: Domain DNS Setup */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 className="text-xs font-bold text-slate-900 flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-urowala-600 text-white flex items-center justify-center text-[10px]">4</span>
-              <span>Connect Custom Domain (socialmedia.urowala.com)</span>
-            </h4>
-            <p className="text-xs text-slate-600">
-              In your DNS provider (Cloudflare, GoDaddy, or Namecheap) for <code>urowala.com</code>, add a CNAME record:
-            </p>
-            <div className="bg-white px-3 py-2 rounded-lg border border-slate-200 font-mono text-xs text-slate-800">
-              Type: <code>CNAME</code> &bull; Name: <code>socialmedia</code> &bull; Value: <code>cname.vercel-dns.com</code>
+              <p className="text-slate-400 mt-2 font-bold"># Vercel Cron Security</p>
+              <p>CRON_SECRET=generate_a_random_32_character_string_here</p>
             </div>
           </div>
         </div>
