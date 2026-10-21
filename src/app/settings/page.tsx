@@ -22,7 +22,7 @@ export default function SettingsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-[#0c0712] text-slate-100">
       <Header isDemo={accountStatus.isDemo} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -31,13 +31,15 @@ export default function SettingsPage() {
           accountUsername={accountStatus.account?.username}
           lastSyncedAt={accountStatus.account?.lastSyncedAt}
           hasApifyToken={(accountStatus as any).hasApifyToken}
+          hasMetaApp={(accountStatus as any).hasMetaApp}
           provider={(accountStatus as any).provider}
+          storageStats={(accountStatus as any).storageStats}
         />
       </main>
 
-      <footer className="mt-auto border-t border-slate-200 bg-white py-6 text-xs text-slate-500">
+      <footer className="mt-auto border-t border-pink-900/30 bg-[#120a1b] py-6 text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span className="font-bold text-slate-800">UROWALA &bull; Security & API Settings</span>
+          <span className="font-bold text-slate-200">UROWALA &bull; Security & API Settings</span>
           <span>Zero-trust tokens &bull; Encrypted storage</span>
         </div>
       </footer>

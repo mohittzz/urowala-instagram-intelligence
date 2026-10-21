@@ -14,6 +14,39 @@ export function formatISTDate(dateInput: string | Date | number, formatStr: 'ful
     timeZone: TIMEZONE_IST,
   };
 
+  if (formatStr === 'short') {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: TIMEZONE_IST, year: 'numeric', month: '2-digit', day: '2-digit' });
+    const targetDay = formatter.format(date);
+    const today = formatter.format(now);
+
+    const timeFormatter = new Intl.DateTimeFormat('en-IN', {
+      timeZone: TIMEZONE_IST,
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const timeStr = timeFormatter.format(date);
+
+    if (targetDay === today) {
+      return `Today at ${timeStr} IST`;
+    }
+
+    // Check yesterday
+    const yesterdayDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const yesterday = formatter.format(yesterdayDate);
+    if (targetDay === yesterday) {
+      return `Yesterday at ${timeStr} IST`;
+    }
+
+    const dayMonthFormatter = new Intl.DateTimeFormat('en-IN', {
+      timeZone: TIMEZONE_IST,
+      day: 'numeric',
+      month: 'short',
+    });
+    return `${dayMonthFormatter.format(date)}, ${timeStr} IST`;
+  }
+
   switch (formatStr) {
     case 'full':
       options.year = 'numeric';
@@ -29,14 +62,6 @@ export function formatISTDate(dateInput: string | Date | number, formatStr: 'ful
       options.day = 'numeric';
       break;
     case 'time':
-      options.hour = '2-digit';
-      options.minute = '2-digit';
-      options.hour12 = true;
-      break;
-    case 'short':
-    default:
-      options.month = 'short';
-      options.day = 'numeric';
       options.hour = '2-digit';
       options.minute = '2-digit';
       options.hour12 = true;

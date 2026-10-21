@@ -37,11 +37,9 @@ export class ApifyInstagramClient {
       // Run the official apify/instagram-scraper actor
       // It supports fetching posts/reels with comments, view counts, and engagement
       const run = await this.client.actor('apify/instagram-scraper').call({
-        username: [cleanUsername],
-        resultsType: 'posts',
-        resultsLimit: limit,
-        scrapeUserPosts: true,
-        expandOwners: true,
+        directUrls: [`https://www.instagram.com/${cleanUsername}`],
+        resultsType: 'reels',
+        resultsLimit: limit || 100,
       });
 
       console.log(`[Apify Scraper] Actor run completed (Run ID: ${run.id}). Fetching dataset items...`);

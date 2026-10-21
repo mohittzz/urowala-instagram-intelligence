@@ -135,18 +135,18 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+    <div className="bg-[#150d1f]/90 rounded-2xl border border-pink-900/40 shadow-xl overflow-hidden backdrop-blur-md">
       {/* Table Toolbar */}
-      <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <div className="p-4 sm:p-5 border-b border-pink-950/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         <div>
-          <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+          <h3 className="font-bold text-white text-sm sm:text-base flex items-center gap-2">
             <span>Reel Intelligence Performance Table</span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-pink-950/70 text-pink-300 border border-pink-800/50">
               {filteredReels.length} Reels
             </span>
           </h3>
-          <p className="text-xs text-slate-500">
-            Sorted by <strong className="text-slate-700">{sortField}</strong> ({sortDir.toUpperCase()}) across {periodLabel}
+          <p className="text-xs text-slate-400">
+            Sorted by <strong className="text-pink-400">{sortField}</strong> ({sortDir.toUpperCase()}) across {periodLabel}
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
               placeholder="Search caption or keyword..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-urowala-500 focus:bg-white transition"
+              className="w-full text-xs pl-9 pr-3 py-2 bg-[#1d122b] border border-pink-900/50 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
             />
           </div>
 
@@ -169,7 +169,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
             <select
               value={selectedTopic}
               onChange={(e) => setSelectedTopic(e.target.value)}
-              className="text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-urowala-500 transition cursor-pointer"
+              className="text-xs px-3 py-2 bg-[#1d122b] border border-pink-900/50 rounded-xl font-medium text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-pink-500 transition cursor-pointer"
             >
               <option value="all">All Topics (8)</option>
               {DEMO_TOPICS.map((t) => (
@@ -183,10 +183,10 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
           {/* Export CSV Button */}
           <button
             onClick={() => exportReelsToCSV(filteredReels, periodLabel)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition active:scale-95 shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-2 bg-[#1d122b] hover:bg-pink-950/60 hover:text-pink-300 text-slate-300 font-semibold rounded-xl text-xs transition active:scale-95 shadow-md border border-pink-900/40"
             title="Download full analytics as CSV"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-pink-400" />
             <span className="hidden sm:inline">Export CSV</span>
           </button>
         </div>
@@ -194,22 +194,22 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
 
       {/* Responsive Table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs text-slate-600 border-collapse">
-          <thead className="bg-slate-50/80 text-[11px] uppercase tracking-wider font-semibold text-slate-500 border-b border-slate-200">
+        <table className="w-full text-left text-xs text-slate-300 border-collapse">
+          <thead className="bg-[#1c112a] text-[11px] uppercase tracking-wider font-semibold text-slate-400 border-b border-pink-950/80">
             <tr>
               <th className="py-3 px-4">Reel / Topic</th>
               <th
                 onClick={() => handleSort('viewsGained')}
-                className="py-3 px-3 cursor-pointer hover:text-slate-900 transition"
+                className="py-3 px-3 cursor-pointer hover:text-white transition"
               >
                 <div className="flex items-center gap-1">
                   <span>Period Views</span>
-                  <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                  <ArrowUpDown className="w-3 h-3 text-pink-400" />
                 </div>
               </th>
               <th
                 onClick={() => handleSort('lifetimeViews')}
-                className="py-3 px-3 cursor-pointer hover:text-slate-900 transition"
+                className="py-3 px-3 cursor-pointer hover:text-white transition"
               >
                 <div className="flex items-center gap-1">
                   <span>Lifetime Views</span>
@@ -218,16 +218,16 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
               </th>
               <th
                 onClick={() => handleSort('commentsGained')}
-                className="py-3 px-3 cursor-pointer hover:text-slate-900 transition"
+                className="py-3 px-3 cursor-pointer hover:text-white transition"
               >
                 <div className="flex items-center gap-1">
                   <span>Comments Gained</span>
-                  <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                  <ArrowUpDown className="w-3 h-3 text-purple-400" />
                 </div>
               </th>
               <th
                 onClick={() => handleSort('commentToViewRatio')}
-                className="py-3 px-3 cursor-pointer hover:text-slate-900 transition"
+                className="py-3 px-3 cursor-pointer hover:text-white transition"
               >
                 <div className="flex items-center gap-1">
                   <span>Comment Rate</span>
@@ -236,31 +236,31 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
               </th>
               <th
                 onClick={() => handleSort('shares')}
-                className="py-3 px-3 cursor-pointer hover:text-slate-900 transition"
+                className="py-3 px-3 cursor-pointer hover:text-white transition"
               >
                 <div className="flex items-center gap-1">
                   <span>Shares / Saves</span>
-                  <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                  <ArrowUpDown className="w-3 h-3 text-amber-400" />
                 </div>
               </th>
               <th className="py-3 px-3">Reach / Watch</th>
               <th
                 onClick={() => handleSort('attributedFollows')}
-                className="py-3 px-3 cursor-pointer hover:text-slate-900 transition"
+                className="py-3 px-3 cursor-pointer hover:text-white transition"
               >
                 <div className="flex items-center gap-1">
                   <span>Attributed Follows</span>
-                  <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                  <ArrowUpDown className="w-3 h-3 text-rose-400" />
                 </div>
               </th>
               <th className="py-3 px-3">Momentum</th>
               <th className="py-3 px-4 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-normal">
+          <tbody className="divide-y divide-pink-950/60 font-normal">
             {filteredReels.length === 0 ? (
               <tr>
-                <td colSpan={10} className="py-12 text-center text-slate-400">
+                <td colSpan={10} className="py-12 text-center text-slate-500">
                   No Reels match the active filters.
                 </td>
               </tr>
@@ -269,7 +269,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                 const isEditingTopic = editingTopicReelId === reel.id;
 
                 return (
-                  <tr key={reel.id} className="hover:bg-slate-50/70 transition group">
+                  <tr key={reel.id} className="hover:bg-pink-950/20 transition group">
                     {/* Thumbnail + Caption + Topic */}
                     <td className="py-3 px-4 max-w-xs">
                       <div className="flex items-start gap-3">
@@ -292,7 +292,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                         <div className="min-w-0 flex-1">
                           {/* Caption */}
                           <p
-                            className="font-medium text-slate-900 line-clamp-2 text-xs leading-snug mb-1"
+                            className="font-medium text-white line-clamp-2 text-xs leading-snug mb-1"
                             title={reel.caption}
                           >
                             {reel.caption}
@@ -306,7 +306,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                                   autoFocus
                                   defaultValue={reel.topicId}
                                   onChange={(e) => handleTopicSelect(reel.id, e.target.value)}
-                                  className="text-[11px] py-0.5 px-1.5 border border-urowala-400 rounded bg-white text-slate-800"
+                                  className="text-[11px] py-0.5 px-1.5 border border-pink-500 rounded bg-[#1e122b] text-white"
                                 >
                                   {DEMO_TOPICS.map((t) => (
                                     <option key={t.id} value={t.id}>
@@ -316,7 +316,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                                 </select>
                                 <button
                                   onClick={() => setEditingTopicReelId(null)}
-                                  className="text-[10px] text-slate-500 hover:text-slate-800 underline"
+                                  className="text-[10px] text-pink-300 hover:text-white underline"
                                 >
                                   Done
                                 </button>
@@ -326,15 +326,15 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                                 onClick={() => setEditingTopicReelId(reel.id)}
                                 className="group/pill inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border transition"
                                 style={{
-                                  backgroundColor: `${reel.topicColor}12`,
-                                  borderColor: `${reel.topicColor}30`,
+                                  backgroundColor: `${reel.topicColor}20`,
+                                  borderColor: `${reel.topicColor}50`,
                                   color: reel.topicColor,
                                 }}
                                 title="Click to reassign topic"
                               >
                                 <Tag className="w-2.5 h-2.5" />
                                 <span>{reel.topicName}</span>
-                                <span className="opacity-0 group-hover/pill:opacity-100 text-[9px] underline ml-0.5 text-slate-500">
+                                <span className="opacity-0 group-hover/pill:opacity-100 text-[9px] underline ml-0.5 text-slate-400">
                                   edit
                                 </span>
                               </button>
@@ -350,7 +350,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
 
                     {/* Period Views */}
                     <td className="py-3 px-3">
-                      <div className="font-bold text-slate-900 text-sm">
+                      <div className="font-bold text-white text-sm">
                         +{formatCompactNumber(reel.periodMetrics.viewsGained)}
                       </div>
                       <div className="text-[10px] text-slate-400 font-mono">
@@ -360,7 +360,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
 
                     {/* Lifetime Views */}
                     <td className="py-3 px-3">
-                      <div className="font-semibold text-slate-700">
+                      <div className="font-semibold text-slate-200">
                         {formatCompactNumber(reel.lifetimeMetrics.views)}
                       </div>
                       <div className="text-[10px] text-slate-400 font-mono">
@@ -370,7 +370,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
 
                     {/* Comments Gained */}
                     <td className="py-3 px-3">
-                      <div className="font-bold text-slate-900">
+                      <div className="font-bold text-white">
                         +{reel.periodMetrics.commentsGained}
                       </div>
                       <div className="text-[10px] text-slate-400">
@@ -380,7 +380,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
 
                     {/* Comment-to-View Ratio */}
                     <td className="py-3 px-3">
-                      <div className="font-semibold text-urowala-700">
+                      <div className="font-semibold text-pink-400">
                         {formatPercent(reel.periodMetrics.commentToViewRatio, 2)}
                       </div>
                       <div className="text-[10px] text-slate-400">
@@ -390,7 +390,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
 
                     {/* Shares & Saves */}
                     <td className="py-3 px-3">
-                      <div className="text-slate-800 font-medium">
+                      <div className="text-slate-200 font-medium">
                         {reel.periodMetrics.sharesGained !== null ? `+${reel.periodMetrics.sharesGained} sh` : '—'}
                       </div>
                       <div className="text-[10px] text-slate-400">
@@ -400,7 +400,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
 
                     {/* Reach & Watch Time */}
                     <td className="py-3 px-3">
-                      <div className="text-slate-800 font-medium">
+                      <div className="text-slate-200 font-medium">
                         {formatCompactNumber(reel.lifetimeMetrics.reach)}
                       </div>
                       <div className="text-[10px] text-slate-400">
@@ -412,12 +412,12 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                     <td className="py-3 px-3">
                       {reel.periodMetrics.attributedFollowsGained !== null ? (
                         <div>
-                          <div className="font-bold text-slate-900">
+                          <div className="font-bold text-white">
                             +{reel.periodMetrics.attributedFollowsGained} follows
                           </div>
                           {reel.periodMetrics.followerConversionRate !== null ? (
                             <div
-                              className="text-[10px] text-rose-600 font-semibold cursor-help"
+                              className="text-[10px] text-rose-400 font-semibold cursor-help"
                               title={reel.periodMetrics.followerConversionFormula}
                             >
                               {reel.periodMetrics.followerConversionRate}% conv.
@@ -436,18 +436,18 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                     {/* Momentum Trend */}
                     <td className="py-3 px-3">
                       {reel.periodMetrics.momentumTrend === 'surging' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <TrendingUp className="w-3 h-3 text-emerald-600" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-800/50">
+                          <TrendingUp className="w-3 h-3 text-emerald-400" />
                           <span>+{reel.periodMetrics.momentumDeltaPercent}%</span>
                         </span>
                       ) : reel.periodMetrics.momentumTrend === 'cooling' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                          <TrendingDown className="w-3 h-3 text-slate-500" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                          <TrendingDown className="w-3 h-3 text-slate-400" />
                           <span>{reel.periodMetrics.momentumDeltaPercent}%</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                          <Minus className="w-3 h-3 text-blue-500" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-950/70 text-blue-300 border border-blue-800/50">
+                          <Minus className="w-3 h-3 text-blue-400" />
                           <span>Steady</span>
                         </span>
                       )}
@@ -459,7 +459,7 @@ export function ReelsTable({ reels, periodLabel, onTopicChange }: ReelsTableProp
                         href={reel.permalink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-urowala-50 hover:text-urowala-700 text-slate-700 font-semibold rounded-lg text-xs transition border border-slate-200 hover:border-urowala-200"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#221334] hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 text-slate-200 hover:text-white font-semibold rounded-lg text-xs transition border border-pink-900/40 shadow-sm"
                         title="Open Reel on Instagram"
                       >
                         <span>Open</span>

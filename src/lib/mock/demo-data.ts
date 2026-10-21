@@ -8,11 +8,11 @@ export const DEMO_ACCOUNT = {
   id: '17841405928173921',
   username: 'dr.mohit_urowala',
   name: 'Dr. Mohit Sharma | Urologist & Andrologist',
-  profilePictureUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=256&h=256&fit=crop&crop=faces&auto=format&q=80',
+  profilePictureUrl: '/dr-mohit-profile.jpg',
   followersCount: 48920,
   netFollowerGrowth24h: 184,
   mediaCount: 142,
-  lastSyncedAt: new Date(DEMO_REFERENCE_NOW - 14 * 60 * 1000).toISOString(), // 14 mins ago
+  lastSyncedAt: new Date().toISOString(),
 };
 
 export const DEMO_TOPICS = [

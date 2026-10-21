@@ -1,23 +1,19 @@
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: Request) {
   const appId = process.env.INSTAGRAM_APP_ID;
-  const redirectUri = process.env.INSTAGRAM_REDIRECT_URI || 'https://socialmedia.urowala.com/api/auth/instagram/callback';
+  const url = new URL(request.url);
+  const redirectUri = process.env.INSTAGRAM_REDIRECT_URI || `${url.origin}/api/auth/instagram/callback`;
 
   if (!appId) {
-    return NextResponse.json(
-      { error: 'Meta Instagram App ID is not configured in environment variables (INSTAGRAM_APP_ID).' },
-      { status: 500 }
-    );
+    return NextResponse.redirect(new URL('/settings?meta_error=missing_app_id', url.origin));
   }
 
   // Permissions required for Professional Instagram account intelligence
+  // Excluded deprecated pages_show_list which causes Meta OAuth rejection on non-verified apps
   const scope = [
     'instagram_basic',
     'instagram_manage_insights',
-    'instagram_manage_comments',
-    'pages_show_list',
-    'pages_read_engagement',
   ].join(',');
 
   const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(

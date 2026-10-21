@@ -118,7 +118,7 @@ export async function executeInstagramSync(triggerType: 'cron' | 'manual' | 'web
         .from('reels')
         .select('topic_id, topic_manual_override')
         .eq('id', media.id)
-        .single();
+        .maybeSingle();
 
       const topicToSet = (existingReel && existingReel.topic_manual_override) 
         ? existingReel.topic_id 

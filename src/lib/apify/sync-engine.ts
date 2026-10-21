@@ -120,11 +120,25 @@ export async function executeApifySync(
       // Fetch topics for automatic categorization
       const { data: topics } = await supabase.from('topics').select('id, name, keywords');
 
+      // 1. Fetch any existing manual overrides in a single query
+      const reelIds = reelsData.map((r) => r.id || `reel_${r.shortCode}`);
+      const { data: existingRows } = await supabase
+        .from('reels')
+        .select('id, topic_id, topic_manual_override')
+        .in('id', reelIds);
+
+      const existingMap = new Map((existingRows || []).map((r) => [r.id, r]));
+
+      const reelsToUpsert: any[] = [];
+      const snapshotsToInsert: any[] = [];
+      const commentsToUpsert: any[] = [];
+      const nowIso = new Date().toISOString();
+
       for (const reel of reelsData) {
         const reelId = reel.id || `reel_${reel.shortCode}`;
         const permalink = reel.url || `https://www.instagram.com/reel/${reel.shortCode}/`;
         const caption = reel.caption || '';
-        const postedAt = reel.timestamp || new Date().toISOString();
+        const postedAt = reel.timestamp || nowIso;
         const viewsCount = reel.videoPlayCount || reel.videoViewCount || 0;
         const likesCount = reel.likesCount || 0;
         const commentsCount = reel.commentsCount || 0;
@@ -144,19 +158,12 @@ export async function executeApifySync(
           }
         }
 
-        // Check for manual override
-        const { data: existingReel } = await supabase
-          .from('reels')
-          .select('topic_id, topic_manual_override')
-          .eq('id', reelId)
-          .single();
-
+        const existingReel = existingMap.get(reelId);
         const topicToSet = (existingReel && existingReel.topic_manual_override)
           ? existingReel.topic_id
           : detectedTopicId;
 
-        // Upsert Reel catalog
-        await supabase.from('reels').upsert({
+        reelsToUpsert.push({
           id: reelId,
           account_id: accountId,
           shortcode: reel.shortCode || null,
@@ -168,43 +175,58 @@ export async function executeApifySync(
           posted_at: postedAt,
           topic_id: topicToSet,
           is_deleted: false,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'id' });
+          updated_at: nowIso,
+        });
 
-        // Insert timestamped snapshot
-        await supabase.from('reel_snapshots').insert({
+        snapshotsToInsert.push({
           reel_id: reelId,
-          timestamp: new Date().toISOString(),
+          timestamp: nowIso,
           views: viewsCount,
-          reach: Math.round(viewsCount * 0.85), // Estimated reach when not directly exposed in public scraper
+          reach: Math.round(viewsCount * 0.85),
           likes: likesCount,
           comments_count: commentsCount,
-          shares: null, // Scraper doesn't see private shares
+          shares: null,
           saves: null,
           avg_watch_time: reel.videoDuration ? Math.round(reel.videoDuration * 0.6) : null,
           total_play_time: reel.videoDuration ? Math.round(viewsCount * reel.videoDuration * 0.6) : null,
           attributed_follows: null,
         });
 
-        totalReelsSynced++;
-
-        // Ingest latest comments
         if (reel.latestComments && Array.isArray(reel.latestComments)) {
           for (const comm of reel.latestComments) {
             const isQuestion = isCommentQuestion(comm.text);
-            await supabase.from('reel_comments').upsert({
+            commentsToUpsert.push({
               id: comm.id || `comm_${Math.random().toString(36).substring(7)}`,
               reel_id: reelId,
               text: comm.text,
               commenter_username: comm.ownerUsername || 'user',
-              posted_at: comm.timestamp || new Date().toISOString(),
+              posted_at: comm.timestamp || nowIso,
               like_count: comm.likesCount || 0,
               is_question: isQuestion,
-            }, { onConflict: 'id' });
-
-            totalCommentsSynced++;
+            });
           }
         }
+      }
+
+      // 2. Batch upsert reels in one call
+      if (reelsToUpsert.length > 0) {
+        await supabase.from('reels').upsert(reelsToUpsert, { onConflict: 'id' });
+        totalReelsSynced = reelsToUpsert.length;
+      }
+
+      // 3. Batch insert snapshots in one call
+      if (snapshotsToInsert.length > 0) {
+        await supabase.from('reel_snapshots').insert(snapshotsToInsert);
+      }
+
+      // 4. Batch upsert comments in chunks of 50
+      if (commentsToUpsert.length > 0) {
+        const chunkSize = 50;
+        for (let i = 0; i < commentsToUpsert.length; i += chunkSize) {
+          const chunk = commentsToUpsert.slice(i, i + chunkSize);
+          await supabase.from('reel_comments').upsert(chunk, { onConflict: 'id' });
+        }
+        totalCommentsSynced = commentsToUpsert.length;
       }
 
       // Finish log entry

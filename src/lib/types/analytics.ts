@@ -53,6 +53,7 @@ export interface SummaryOverview {
   viewsGainedDeltaPercent: number;
   totalNewComments: number;
   newCommentsDeltaPercent: number;
+  totalInteractions?: number;
   totalSharesGained: number | null;
   totalSavesGained: number | null;
   netFollowerGrowth: number; // Account-level net growth
@@ -124,4 +125,59 @@ export interface HourlyCommentPoint {
   hour: string; // e.g., "10:00 AM"
   commentsCount: number;
   questionCount: number;
+}
+
+export type ActivePlatform = 'instagram' | 'facebook';
+
+export interface FacebookPageItem {
+  id: string;
+  name: string;
+  link: string;
+  about: string;
+  fanCount: number;
+  followersCount: number;
+  pictureUrl: string;
+  coverUrl: string;
+  lastSyncedAtIST: string;
+}
+
+export interface FacebookPostItem {
+  id: string;
+  message: string;
+  permalinkUrl: string;
+  createdTime: string;
+  createdTimeIST: string;
+  sharesCount: number;
+  likesCount: number;
+  commentsCount: number;
+  viewsCount: number;
+  topicId: string;
+  topicName: string;
+  topicColor: string;
+}
+
+export interface FacebookPageSummary {
+  period: DateRangePreset;
+  periodLabel: string;
+  followersCount: number;
+  netFollowerGrowth: number;
+  netFollowerGrowthDeltaPercent: number;
+  totalViewsGained: number;
+  viewsGainedDeltaPercent: number;
+  totalInteractions: number;
+  interactionsDeltaPercent: number;
+  totalSharesGained: number;
+  sharesDeltaPercent: number;
+  lastSyncedAtIST: string;
+  topPost: FacebookPostItem | null;
+}
+
+export interface CrossPlatformStats {
+  instagramFollowers: number;
+  facebookFollowers: number;
+  totalCombinedFollowers: number;
+  instagramSharePercent: number;
+  facebookSharePercent: number;
+  combinedViewsGained: number;
+  combinedInteractions: number;
 }

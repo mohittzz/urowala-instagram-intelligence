@@ -43,11 +43,11 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Layers className="w-5 h-5 text-urowala-600" />
+            <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <Layers className="w-5 h-5 text-pink-400" />
               <span>Urology Topic Performance Dashboard</span>
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               Aggregated views, comments, and engagement across Dr. Mohit Sharma's 8 core urology pillars
             </p>
           </div>
@@ -56,8 +56,8 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
             onClick={() => setActiveTopicId('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition self-start sm:self-auto ${
               activeTopicId === 'all'
-                ? 'bg-urowala-900 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white'
+                : 'bg-[#1b1124] text-slate-300 hover:bg-[#251833] border border-pink-900/40'
             }`}
           >
             Show All Topics ({reels.length} Reels)
@@ -73,57 +73,57 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
               <div
                 key={topic.id}
                 onClick={() => setActiveTopicId(topic.id)}
-                className={`p-4 rounded-2xl border transition cursor-pointer flex flex-col justify-between shadow-2xs ${
+                className={`p-4 rounded-2xl border transition cursor-pointer flex flex-col justify-between shadow-md ${
                   isSelected
-                    ? 'border-urowala-600 bg-urowala-50/40 ring-2 ring-urowala-500/20'
-                    : 'border-slate-200 bg-white hover:border-urowala-300'
+                    ? 'border-pink-500 bg-pink-950/30 ring-2 ring-pink-500/30'
+                    : 'border-pink-900/30 bg-[#150d1d] hover:border-pink-500/50 hover:bg-[#1a1024]'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span
-                      className="inline-block w-3 h-3 rounded-full"
+                      className="inline-block w-3 h-3 rounded-full shadow-xs"
                       style={{ backgroundColor: topic.color }}
                     />
-                    <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                    <span className="text-[11px] font-semibold text-pink-300 bg-pink-950/60 border border-pink-800/40 px-2 py-0.5 rounded-full">
                       {topic.reelCount} Reels
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-slate-900 text-sm mb-1">{topic.name}</h3>
+                  <h3 className="font-bold text-white text-sm mb-1">{topic.name}</h3>
 
                   <div className="space-y-1.5 mt-3 text-xs">
-                    <div className="flex items-center justify-between text-slate-600">
+                    <div className="flex items-center justify-between text-slate-300">
                       <span className="flex items-center gap-1">
                         <Eye className="w-3.5 h-3.5 text-slate-400" />
                         <span>Period Views</span>
                       </span>
-                      <strong className="text-slate-900">+{formatCompactNumber(topic.viewsGained)}</strong>
+                      <strong className="text-white">+{formatCompactNumber(topic.viewsGained)}</strong>
                     </div>
 
-                    <div className="flex items-center justify-between text-slate-600">
+                    <div className="flex items-center justify-between text-slate-300">
                       <span className="flex items-center gap-1">
                         <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
                         <span>New Comments</span>
                       </span>
-                      <strong className="text-slate-900">+{topic.commentsGained}</strong>
+                      <strong className="text-white">+{topic.commentsGained}</strong>
                     </div>
 
-                    <div className="flex items-center justify-between text-slate-600">
+                    <div className="flex items-center justify-between text-slate-300">
                       <span className="flex items-center gap-1">
                         <Target className="w-3.5 h-3.5 text-slate-400" />
                         <span>Attributed Follows</span>
                       </span>
-                      <strong className="text-rose-600">
+                      <strong className="text-rose-400">
                         {topic.attributedFollows !== null ? `+${topic.attributedFollows}` : '—'}
                       </strong>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                  <span className="text-slate-500">Engage Rate:</span>
-                  <span className="font-bold text-urowala-700">{topic.avgEngagementRate}%</span>
+                <div className="mt-3 pt-2.5 border-t border-pink-950/80 flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Engage Rate:</span>
+                  <span className="font-bold text-pink-300">{topic.avgEngagementRate}%</span>
                 </div>
               </div>
             );
@@ -132,19 +132,19 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
       </div>
 
       {/* Topic Assignment Table */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-2">
+      <div className="bg-[#150d1d] rounded-2xl p-5 border border-pink-900/30 shadow-md">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-pink-950 gap-2">
           <div>
-            <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
-              <Tag className="w-4 h-4 text-urowala-600" />
+            <h3 className="font-bold text-white text-sm sm:text-base flex items-center gap-2">
+              <Tag className="w-4 h-4 text-pink-400" />
               <span>Topic Tagging & Manual Categorization Manager</span>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               Captions are auto-classified via clinical keyword detection. Authorized users can reassign categories below.
             </p>
           </div>
 
-          <span className="text-xs font-semibold px-2.5 py-1 bg-slate-100 rounded-lg text-slate-600 self-start sm:self-auto">
+          <span className="text-xs font-semibold px-2.5 py-1 bg-pink-950/50 border border-pink-800/40 rounded-lg text-pink-300 self-start sm:self-auto">
             Viewing: {activeTopicId === 'all' ? 'All Topics' : DEMO_TOPICS.find((t) => t.id === activeTopicId)?.name} ({filteredReels.length} Reels)
           </span>
         </div>
@@ -157,24 +157,24 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
             return (
               <div
                 key={reel.id}
-                className="p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white transition flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs"
+                className="p-3.5 rounded-xl border border-pink-950/80 hover:border-pink-800/60 bg-[#1a1024]/80 hover:bg-[#1f132b] transition flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm"
               >
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                   <img
                     src={reel.thumbnailUrl}
                     alt="Thumb"
-                    className="w-12 h-16 object-cover rounded-lg border border-slate-200 shrink-0"
+                    className="w-12 h-16 object-cover rounded-lg border border-pink-900/40 shrink-0"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-slate-900 line-clamp-2 mb-1">
+                    <p className="text-xs font-bold text-white line-clamp-2 mb-1">
                       {reel.caption}
                     </p>
-                    <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
+                    <div className="flex items-center gap-3 text-xs text-slate-400 flex-wrap">
                       <span suppressHydrationWarning>Posted: {reel.postedAtIST.split(',')[0]}</span>
                       <span>&bull;</span>
                       <span>Lifetime: {formatCompactNumber(reel.lifetimeMetrics.views)} views</span>
                       <span>&bull;</span>
-                      <span>Period: +{formatCompactNumber(reel.periodMetrics.viewsGained)} views</span>
+                      <span className="text-pink-300 font-medium">Period: +{formatCompactNumber(reel.periodMetrics.viewsGained)} views</span>
                     </div>
                   </div>
                 </div>
@@ -187,17 +187,17 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
                         autoFocus
                         defaultValue={reel.topicId}
                         onChange={(e) => handleTopicSelect(reel.id, e.target.value)}
-                        className="text-xs py-1 px-2 border border-urowala-500 rounded-lg bg-white text-slate-900 shadow-xs"
+                        className="text-xs py-1 px-2 border border-pink-500 rounded-lg bg-[#251833] text-white shadow-xs focus:outline-hidden"
                       >
                         {DEMO_TOPICS.map((t) => (
-                          <option key={t.id} value={t.id}>
+                          <option key={t.id} value={t.id} className="bg-[#1f132b] text-white">
                             {t.name}
                           </option>
                         ))}
                       </select>
                       <button
                         onClick={() => setEditingReelId(null)}
-                        className="text-xs text-slate-500 hover:text-slate-800 underline px-1"
+                        className="text-xs text-pink-400 hover:text-pink-300 underline px-1"
                       >
                         Cancel
                       </button>
@@ -207,18 +207,18 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
                       <span
                         className="px-2.5 py-1 rounded-lg text-xs font-semibold border flex items-center gap-1.5"
                         style={{
-                          backgroundColor: `${reel.topicColor}12`,
-                          borderColor: `${reel.topicColor}30`,
-                          color: reel.topicColor,
+                          backgroundColor: `${reel.topicColor}20`,
+                          borderColor: `${reel.topicColor}50`,
+                          color: '#fce7f3',
                         }}
                       >
-                        <Tag className="w-3 h-3" />
+                        <Tag className="w-3 h-3 text-pink-400" />
                         <span>{reel.topicName}</span>
                       </span>
 
                       <button
                         onClick={() => setEditingReelId(reel.id)}
-                        className="p-1.5 text-slate-400 hover:text-urowala-600 hover:bg-urowala-50 rounded-lg transition"
+                        className="p-1.5 text-slate-400 hover:text-pink-300 hover:bg-pink-950/60 rounded-lg transition"
                         title="Change Category"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
@@ -230,7 +230,7 @@ export function TopicManagerView({ topicStats, reels, onTopicChange }: TopicMana
                     href={reel.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-1.5 text-slate-400 hover:text-slate-700 transition"
+                    className="p-1.5 text-slate-400 hover:text-white transition"
                     title="Open on Instagram"
                   >
                     <ExternalLink className="w-4 h-4" />
